@@ -781,7 +781,21 @@ function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
+  history.pushState({page:id}, '', '#'+id);
 }
+
+window.addEventListener('popstate', function(e){
+  const id = e.state ? e.state.page : 'home';
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+window.addEventListener('load', function(){
+  const hash = window.location.hash.replace('#','');
+  if(hash) showPage(hash);
+  else history.replaceState({page:'home'}, '', '#home');
+});
 function setFilter(el){
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
