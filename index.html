@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FANKAAR — Write Your Story</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0B1426;--navy-light:#112240;--navy-mid:#0D1B35;
+  --gold:#C9A84C;--gold-light:#E8C97A;--gold-pale:#F5E8C8;
+  --beige:#EDE0C4;--beige-soft:#F7F0E3;--text-dim:#8A9BB8;
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--navy);color:var(--beige);font-family:var(--sans);overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;width:100%;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(11,20,38,0.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(201,168,76,0.12)}
+.nav-logo{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--gold);letter-spacing:0.12em;cursor:pointer}
+.nav-links{display:flex;gap:36px;list-style:none}
+.nav-links a{color:var(--text-dim);text-decoration:none;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.3s;cursor:pointer}
+.nav-links a:hover{color:var(--gold-light)}
+.nav-right{display:flex;gap:20px;align-items:center}
+.nav-icon{color:var(--text-dim);cursor:pointer;font-size:16px;transition:color 0.3s;background:none;border:none;font-family:var(--sans)}
+.nav-icon:hover{color:var(--gold)}
+.nav-cart{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);padding:8px 20px;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;font-family:var(--sans)}
+.nav-cart:hover{background:var(--gold);color:var(--navy)}
+
+.page{display:none;min-height:100vh;padding-top:80px}
+.page.active{display:block}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:100px 40px 60px}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(201,168,76,0.06) 0%,transparent 70%);pointer-events:none}
+.hero-line{position:absolute;top:0;left:50%;width:1px;height:120px;background:linear-gradient(to bottom,transparent,rgba(201,168,76,0.4),transparent);animation:lineDrop 2s ease-out forwards}
+@keyframes lineDrop{from{opacity:0;transform:scaleY(0)}to{opacity:1;transform:scaleY(1)}}
+.hero-eyebrow{font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:28px;opacity:0;animation:fadeUp 1s 0.4s ease forwards}
+.hero-title{font-family:var(--serif);font-size:clamp(52px,8vw,100px);font-weight:300;line-height:1.05;text-align:center;color:var(--beige-soft);margin-bottom:12px;opacity:0;animation:fadeUp 1s 0.6s ease forwards}
+.hero-title em{color:var(--gold-light);font-style:italic}
+.hero-subtitle{font-family:var(--serif);font-size:clamp(18px,2.5vw,26px);font-weight:300;font-style:italic;color:var(--text-dim);margin-bottom:48px;opacity:0;animation:fadeUp 1s 0.8s ease forwards;text-align:center}
+.hero-ctas{display:flex;gap:20px;opacity:0;animation:fadeUp 1s 1s ease forwards;flex-wrap:wrap;justify-content:center}
+.btn-primary{background:var(--gold);color:var(--navy);padding:14px 40px;font-size:12px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;border:none;font-family:var(--sans);font-weight:500;transition:all 0.3s}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--gold);border:1px solid rgba(201,168,76,0.4);padding:14px 40px;font-size:12px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;font-family:var(--sans);transition:all 0.3s}
+.btn-ghost:hover{border-color:var(--gold);background:rgba(201,168,76,0.05)}
+.hero-scroll{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeUp 1s 1.4s ease forwards}
+.hero-scroll span{font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--text-dim)}
+.scroll-line{width:1px;height:50px;background:linear-gradient(to bottom,rgba(201,168,76,0.6),transparent);animation:scrollPulse 2s infinite}
+@keyframes scrollPulse{0%,100%{opacity:0.4}50%{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+section{padding:100px 60px}
+.section-eyebrow{font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.section-title{font-family:var(--serif);font-size:clamp(36px,5vw,56px);font-weight:300;color:var(--beige-soft);line-height:1.1;margin-bottom:20px}
+.section-title em{color:var(--gold-light);font-style:italic}
+.section-body{color:var(--text-dim);font-size:15px;line-height:1.8;max-width:480px}
+.divider{width:60px;height:1px;background:linear-gradient(to right,var(--gold),transparent);margin:30px 0}
+
+/* PRODUCT GRID */
+.featured{background:var(--navy-mid)}
+.featured-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:60px;flex-wrap:wrap;gap:20px}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2px}
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:rgba(201,168,76,0.05);margin:1px}
+
+/* PRODUCT CARD */
+.product-card,.shop-item{background:var(--navy-light);position:relative;overflow:hidden;cursor:pointer;transition:background 0.3s}
+.shop-item:hover{background:var(--navy-light)}
+.product-img-wrap,.shop-item-img{width:100%;position:relative;overflow:hidden;background:var(--navy)}
+.product-img-wrap{aspect-ratio:3/4}
+.shop-item-img{aspect-ratio:4/5}
+
+/* ── CAROUSEL ── */
+.card-carousel{width:100%;height:100%;position:relative;overflow:hidden}
+.card-carousel-track{display:flex;width:300%;height:100%;transition:transform 0.45s ease}
+.card-carousel-track img{width:33.333%;height:100%;object-fit:cover;flex-shrink:0;filter:brightness(0.9);transition:filter 0.4s;display:block}
+.product-card:hover .card-carousel-track img,
+.shop-item:hover .card-carousel-track img{filter:brightness(0.75)}
+.card-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(11,20,38,0.6);border:1px solid rgba(201,168,76,0.3);color:var(--gold);font-size:18px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:4;opacity:0;transition:opacity 0.3s;font-family:var(--sans);line-height:1}
+.card-nav.card-prev{left:8px}
+.card-nav.card-next{right:8px}
+.product-card:hover .card-nav,
+.shop-item:hover .card-nav{opacity:1}
+.card-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:4}
+.card-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.3);cursor:pointer;transition:background 0.3s}
+.card-dot.active{background:var(--gold)}
+
+.product-overlay{position:absolute;inset:0;background:rgba(11,20,38,0.5);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.4s;z-index:5}
+.product-card:hover .product-overlay{opacity:1}
+.product-overlay-btn{color:var(--gold);border:1px solid var(--gold);padding:10px 28px;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;background:transparent;cursor:pointer;font-family:var(--sans);transition:all 0.3s}
+.product-overlay-btn:hover{background:var(--gold);color:var(--navy)}
+.shop-item-badge{position:absolute;top:16px;left:16px;background:var(--gold);color:var(--navy);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;padding:4px 10px;font-weight:500;z-index:4}
+.wishlist-btn{position:absolute;top:16px;right:16px;width:36px;height:36px;border:1px solid rgba(255,255,255,0.2);background:rgba(11,20,38,0.7);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-dim);font-size:16px;transition:all 0.3s;font-family:var(--sans);z-index:4}
+.wishlist-btn:hover,.wishlist-btn.active{border-color:var(--gold);color:var(--gold)}
+
+.product-info,.shop-item-info{padding:24px}
+.product-tag{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.product-name{font-family:var(--serif);font-size:22px;font-weight:400;color:var(--beige-soft);margin-bottom:6px}
+.product-desc{font-size:13px;color:var(--text-dim);line-height:1.7;margin-bottom:16px}
+.product-price{font-family:var(--serif);font-size:20px;color:var(--gold-light)}
+
+/* PHILOSOPHY */
+.philosophy{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.philosophy-visual{position:relative;height:500px}
+.phil-block{background:var(--navy-light);border:1px solid rgba(201,168,76,0.1);padding:40px;position:absolute}
+.phil-block:nth-child(1){top:0;left:0;width:75%;height:70%}
+.phil-block:nth-child(2){bottom:0;right:0;width:55%;height:50%;background:rgba(201,168,76,0.06);border-color:rgba(201,168,76,0.2)}
+.phil-quote{font-family:var(--serif);font-size:28px;font-weight:300;font-style:italic;color:var(--beige-soft);line-height:1.4}
+.phil-attr{font-size:11px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-top:20px}
+.values-list{display:flex;flex-direction:column;gap:28px;margin-top:40px}
+.value-item{display:flex;gap:20px;align-items:flex-start}
+.value-num{font-family:var(--serif);font-size:36px;font-weight:300;color:rgba(201,168,76,0.3);line-height:1;min-width:40px}
+.value-text h4{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--beige);margin-bottom:4px}
+.value-text p{font-size:13px;color:var(--text-dim);line-height:1.7}
+
+/* INSTA */
+.insta-section{background:var(--navy-mid);text-align:center}
+.insta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin:50px 0}
+.insta-item{aspect-ratio:1;background:var(--navy-light);position:relative;overflow:hidden;cursor:pointer}
+.insta-item:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:auto}
+.insta-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.4s;background:rgba(11,20,38,0.5)}
+.insta-item:hover .insta-overlay{opacity:1}
+.insta-handle{font-size:11px;letter-spacing:0.2em;color:var(--gold-light);text-transform:uppercase}
+.insta-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px}
+.insta-label{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--text-dim);text-align:center;line-height:1.5}
+
+/* NEWSLETTER */
+.newsletter{border-top:1px solid rgba(201,168,76,0.1);border-bottom:1px solid rgba(201,168,76,0.1);display:flex;align-items:center;justify-content:space-between;gap:40px;flex-wrap:wrap}
+.nl-text h3{font-family:var(--serif);font-size:32px;font-weight:300;color:var(--beige-soft);margin-bottom:8px}
+.nl-text p{font-size:14px;color:var(--text-dim);line-height:1.7}
+.nl-form{display:flex;min-width:360px}
+.nl-input{flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);border-right:none;padding:14px 20px;color:var(--beige);font-size:14px;font-family:var(--sans);outline:none}
+.nl-input::placeholder{color:var(--text-dim)}
+.nl-btn{background:var(--gold);color:var(--navy);border:none;padding:14px 28px;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;font-family:var(--sans);font-weight:500;white-space:nowrap;transition:background 0.3s}
+.nl-btn:hover{background:var(--gold-light)}
+
+/* FOOTER */
+footer{background:rgba(7,14,28,0.9);padding:80px 60px 40px;border-top:1px solid rgba(201,168,76,0.08)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:60px;margin-bottom:60px}
+.footer-logo{font-family:var(--serif);font-size:28px;font-weight:600;color:var(--gold);letter-spacing:0.1em}
+.footer-brand p{font-size:13px;color:var(--text-dim);line-height:1.8;margin-top:16px;max-width:280px}
+.footer-col h4{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:10px}
+.footer-col ul a{color:var(--text-dim);text-decoration:none;font-size:13px;transition:color 0.3s;cursor:pointer}
+.footer-col ul a:hover{color:var(--gold)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:30px;border-top:1px solid rgba(255,255,255,0.05)}
+.footer-bottom p{font-size:12px;color:var(--text-dim)}
+.social-links{display:flex;gap:16px;margin-top:24px}
+.social-link{width:36px;height:36px;border:1px solid rgba(201,168,76,0.2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s;color:var(--text-dim);font-size:12px}
+.social-link:hover{border-color:var(--gold);color:var(--gold)}
+
+/* SHOP */
+.shop-hero{padding:80px 60px 40px;border-bottom:1px solid rgba(201,168,76,0.08)}
+.shop-filters{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.filter-btn{padding:8px 20px;border:1px solid rgba(201,168,76,0.2);background:transparent;color:var(--text-dim);font-size:12px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;font-family:var(--sans);transition:all 0.3s}
+.filter-btn:hover,.filter-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.05)}
+
+/* PRODUCT DETAIL */
+.product-detail{display:grid;grid-template-columns:1fr 1fr;min-height:80vh}
+.product-gallery{background:var(--navy-light)}
+.gallery-main{min-height:500px;position:relative;overflow:hidden}
+.gallery-main-img{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:60px;opacity:0;transition:opacity 0.4s}
+.gallery-main-img.active{opacity:1}
+.gallery-main-img img{max-width:100%;max-height:420px;object-fit:contain;display:block}
+.gallery-thumbs{display:flex;gap:10px;padding:20px 30px 30px;justify-content:center}
+.thumb{width:70px;height:90px;border:1px solid rgba(201,168,76,0.2);cursor:pointer;overflow:hidden;transition:border-color 0.3s;flex-shrink:0}
+.thumb img{width:100%;height:100%;object-fit:cover;filter:brightness(0.75);transition:filter 0.3s;display:block}
+.thumb.active,.thumb:hover{border-color:var(--gold)}
+.thumb.active img,.thumb:hover img{filter:brightness(1)}
+.product-info-panel{padding:70px 60px;display:flex;flex-direction:column;justify-content:center}
+.product-category{font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.product-title{font-family:var(--serif);font-size:clamp(32px,4vw,48px);font-weight:300;color:var(--beige-soft);line-height:1.15;margin-bottom:12px}
+.product-tagline{font-family:var(--serif);font-size:16px;font-style:italic;color:var(--text-dim);margin-bottom:24px;line-height:1.6}
+.product-price-large{font-family:var(--serif);font-size:36px;font-weight:300;color:var(--gold-light);margin-bottom:32px}
+.product-specs{display:flex;gap:24px;margin-bottom:32px;flex-wrap:wrap}
+.spec{display:flex;flex-direction:column;gap:4px}
+.spec-label{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim)}
+.spec-val{font-size:14px;color:var(--beige)}
+.add-cart-btn{background:var(--gold);color:var(--navy);border:none;padding:16px;font-size:12px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;font-family:var(--sans);font-weight:500;width:100%;margin-bottom:12px;transition:all 0.3s}
+.add-cart-btn:hover{background:var(--gold-light);transform:translateY(-1px)}
+.wishlist-full{border:1px solid rgba(201,168,76,0.3);background:transparent;color:var(--gold);padding:14px;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;font-family:var(--sans);width:100%;transition:all 0.3s}
+.wishlist-full:hover{background:rgba(201,168,76,0.05)}
+.reviews-section{padding:80px 60px;border-top:1px solid rgba(201,168,76,0.1)}
+.review-card{border:1px solid rgba(201,168,76,0.1);padding:30px;margin-bottom:20px}
+.review-header{display:flex;justify-content:space-between;margin-bottom:12px}
+.reviewer-name{font-weight:500;color:var(--beige);font-size:14px}
+.review-stars{color:var(--gold);font-size:13px;letter-spacing:2px}
+.review-text{font-size:13px;color:var(--text-dim);line-height:1.8}
+
+/* ABOUT */
+.about-hero{min-height:65vh;display:flex;align-items:center;padding:120px 60px;position:relative}
+.about-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 50% 60% at 20% 50%,rgba(201,168,76,0.05) 0%,transparent 60%)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin:80px 0}
+.about-card{background:var(--navy-light);padding:50px 40px;border:1px solid rgba(201,168,76,0.06)}
+.about-card:nth-child(2){background:rgba(201,168,76,0.04);border-color:rgba(201,168,76,0.15)}
+.about-card h3{font-family:var(--serif);font-size:28px;font-weight:300;color:var(--beige-soft);margin-bottom:16px}
+.about-card p{font-size:14px;color:var(--text-dim);line-height:1.9}
+.about-manifesto{padding:100px 60px;text-align:center;border-top:1px solid rgba(201,168,76,0.08)}
+.manifesto-text{font-family:var(--serif);font-size:clamp(28px,4vw,52px);font-weight:300;font-style:italic;color:var(--beige-soft);max-width:800px;margin:0 auto;line-height:1.3}
+.manifesto-text em{color:var(--gold-light)}
+
+/* CART */
+.cart-layout{display:grid;grid-template-columns:1fr 380px;min-height:70vh}
+.cart-items{padding:60px}
+.cart-item{display:grid;grid-template-columns:80px 1fr auto;gap:20px;padding:24px 0;border-bottom:1px solid rgba(201,168,76,0.08);align-items:center}
+.cart-item-img{width:80px;height:100px;overflow:hidden}
+.cart-item-img img{width:100%;height:100%;object-fit:cover;display:block}
+.cart-item-name{font-family:var(--serif);font-size:18px;color:var(--beige);margin-bottom:4px}
+.cart-item-detail{font-size:12px;color:var(--text-dim)}
+.qty-ctrl{display:flex;align-items:center;border:1px solid rgba(201,168,76,0.2);margin-top:12px;width:fit-content}
+.qty-btn{width:32px;height:32px;background:transparent;border:none;color:var(--gold);font-size:16px;cursor:pointer;font-family:var(--sans)}
+.qty-btn:hover{background:rgba(201,168,76,0.1)}
+.qty-num{width:40px;text-align:center;font-size:14px;color:var(--beige);background:transparent;border:none;font-family:var(--sans)}
+.cart-item-price{font-family:var(--serif);font-size:22px;color:var(--gold-light)}
+.cart-summary{background:var(--navy-light);padding:50px 40px;border-left:1px solid rgba(201,168,76,0.08)}
+.summary-title{font-family:var(--serif);font-size:24px;color:var(--beige-soft);margin-bottom:32px}
+.summary-row{display:flex;justify-content:space-between;margin-bottom:16px;font-size:14px}
+.summary-row span:first-child{color:var(--text-dim)}
+.summary-total{display:flex;justify-content:space-between;margin-top:24px;padding-top:24px;border-top:1px solid rgba(201,168,76,0.15)}
+.summary-total span:first-child{font-family:var(--serif);font-size:18px;color:var(--beige)}
+.summary-total span:last-child{font-family:var(--serif);font-size:24px;color:var(--gold-light)}
+.checkout-btn{width:100%;background:var(--gold);color:var(--navy);border:none;padding:18px;font-size:12px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;font-family:var(--sans);font-weight:500;margin-top:28px;transition:background 0.3s}
+.checkout-btn:hover{background:var(--gold-light)}
+.promo-input-wrap{display:flex;margin-top:20px}
+.promo-input{flex:1;background:transparent;border:1px solid rgba(201,168,76,0.15);border-right:none;padding:10px 14px;color:var(--beige);font-size:13px;font-family:var(--sans);outline:none}
+.promo-input::placeholder{color:var(--text-dim)}
+.promo-btn{background:transparent;border:1px solid rgba(201,168,76,0.15);color:var(--gold);padding:10px 16px;font-size:11px;cursor:pointer;font-family:var(--sans)}
+
+@media(max-width:900px){
+  nav{padding:16px 24px}.nav-links{display:none}
+  section{padding:70px 24px}
+  .philosophy,.about-grid,.product-detail,.cart-layout{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:40px}
+  .cart-summary{border-left:none;border-top:1px solid rgba(201,168,76,0.08)}
+  .newsletter{flex-direction:column}.nl-form{min-width:unset;width:100%}
+  .insta-grid{grid-template-columns:repeat(2,1fr)}.insta-item:first-child{grid-column:span 2}
+  .philosophy-visual{height:300px}
+}
+
+.ornament{display:inline-block;width:30px;height:1px;background:var(--gold);vertical-align:middle;margin:0 12px;opacity:0.4}
+.toast{position:fixed;bottom:30px;right:30px;background:var(--navy-light);border:1px solid rgba(201,168,76,0.3);color:var(--beige);padding:14px 24px;font-size:13px;z-index:999;opacity:0;transform:translateY(10px);transition:all 0.4s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">FANKAAR</div>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')">Home</a></li>
+    <li><a onclick="showPage('shop')">Shop</a></li>
+    <li><a onclick="showPage('product')">Journals</a></li>
+    <li><a onclick="showPage('about')">Our Story</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-icon">⊙</button>
+    <button class="nav-icon">♡</button>
+    <button class="nav-cart" onclick="showPage('cart')">Cart (2)</button>
+  </div>
+</nav>
+
+
+<!-- ══════════════════════════════════════════
+     HOME PAGE
+══════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-line"></div>
+    <p class="hero-eyebrow"><span class="ornament"></span>Est. Lahore, Pakistan<span class="ornament"></span></p>
+    <h1 class="hero-title">Write your story.<br><em>Create your identity.</em></h1>
+    <p class="hero-subtitle">Journals crafted for those who dare to feel deeply.</p>
+    <div class="hero-ctas">
+      <button class="btn-primary" onclick="showPage('shop')">Explore Journals</button>
+      <button class="btn-ghost" onclick="showPage('about')">Our Philosophy</button>
+    </div>
+    <div class="hero-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
+  </section>
+
+  <!-- FEATURED — Products 1, 2, 3 -->
+  <section class="featured">
+    <div class="featured-header">
+      <div><p class="section-eyebrow">Featured Collection</p><h2 class="section-title">Journals that <em>breathe</em></h2></div>
+      <button class="btn-ghost" onclick="showPage('shop')" style="white-space:nowrap">View All</button>
+    </div>
+    <div class="products-grid">
+
+      <!-- ▸ PRODUCT 1: The Quran Journal -->
+      <div class="product-card" onclick="showPage('product')">
+        <div class="product-img-wrap">
+          <div class="card-carousel">
+            <div class="card-carousel-track">
+              <img src="images/qjournal-1.jpeg" alt="The Quran Journal 1"> 
+              <img src="images/qjournal-2.jpeg" alt="The Quran Journal 2">
+              <img src="images/qjournal-3.jpeg" alt="The Quran Journal 3">
+              <img src="images/qjournal-4.jpeg" alt="The Quran Journal 4"> 
+            </div>
+            <button class="card-nav card-prev" onclick="cardPrev(event,this)">&#8249;</button>
+            <button class="card-nav card-next" onclick="cardNext(event,this)">&#8250;</button>
+            <div class="card-dots"><div class="card-dot active"></div><div class="card-dot"></div><div class="card-dot"></div></div>
+          </div>
+          <div class="product-overlay"><button class="product-overlay-btn">Quick View</button></div>
+        </div>
+        <div class="product-info">
+          <p class="product-tag">Lined · A5</p>
+          <h3 class="product-name">The Quran Journal</h3>
+          <p class="product-desc">A space where your thoughts breathe, undisturbed.</p>
+          <p class="product-price">PKR 1,850</p>
+        </div>
+      </div>
+
+      <!-- ▸ PRODUCT 2: The Golden Hour -->
+      <div class="product-card" onclick="showPage('product')">
+        <div class="product-img-wrap">
+          <div class="card-carousel">
+            <div class="card-carousel-track">
+              <img src="images/golden-hour-1.jpg" alt="The Golden Hour 1">
+              <img src="images/golden-hour-2.jpg" alt="The Golden Hour 2">
+              <img src="images/golden-hour-3.jpg" alt="The Golden Hour 3">
+            </div>
+            <button class="card-nav card-prev" onclick="cardPrev(event,this)">&#8249;</button>
+            <button class="card-nav card-next" onclick="cardNext(event,this)">&#8250;</button>
+            <div class="card-dots"><div class="card-dot active"></div><div class="card-dot"></div><div class="card-dot"></div></div>
+          </div>
+          <div class="product-overlay"><button class="product-overlay-btn">Quick View</button></div>
+        </div>
+        <div class="product-info">
+          <p class="product-tag">Dotted · B5 · New</p>
+          <h3 class="product-name">The Golden Hour</h3>
+          <p class="product-desc">For ideas that arrive just before dawn.</p>
+          <p class="product-price">PKR 2,400</p>
+        </div>
+      </div>
+
+      <!-- ▸ PRODUCT 3: The Wanderer -->
+      <div class="product-card" onclick="showPage('product')">
+        <div class="product-img-wrap">
+          <div class="card-carousel">
+            <div class="card-carousel-track">
+              <img src="images/wanderer-1.jpg" alt="The Wanderer 1">
+              <img src="images/wanderer-2.jpg" alt="The Wanderer 2">
+              <img src="images/wanderer-3.jpg" alt="The Wanderer 3">
+            </div>
+            <button class="card-nav card-prev" onclick="cardPrev(event,this)">&#8249;</button>
+            <button class="card-nav card-next" onclick="cardNext(event,this)">&#8250;</button>
+            <div class="card-dots"><div class="card-dot active"></div><div class="card-dot"></div><div class="card-dot"></div></div>
+          </div>
+          <div class="product-overlay"><button class="product-overlay-btn">Quick View</button></div>
+        </div>
+        <div class="product-info">
+          <p class="product-tag">Plain · A6 · Pocket</p>
+          <h3 class="product-name">The Wanderer</h3>
+          <p class="product-desc">Carry your universe in your pocket.</p>
+          <p class="product-price">PKR 1,100</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section style="padding:100px 60px">
+    <div class="philosophy">
+      <div class="philosophy-visual">
+        <div class="phil-block">
+          <p class="phil-quote">"A journal is not just a book. It is a mirror, a witness, a home for what lives inside you."</p>
+          <p class="phil-attr">— The Fankaar Manifesto</p>
+        </div>
+        <div class="phil-block">
+          <p style="font-size:13px;color:var(--text-dim);line-height:1.8">Creativity is not a gift given to the few. It is a language we all speak when we dare to listen.</p>
+        </div>
+      </div>
+      <div>
+        <p class="section-eyebrow">What we believe</p>
+        <h2 class="section-title">More than a journal.<br>A <em>declaration.</em></h2>
+        <div class="divider"></div>
+        <div class="values-list">
+          <div class="value-item"><span class="value-num">01</span><div class="value-text"><h4>Expression over perfection</h4><p>Every page you fill is an act of courage. Your words don't need to be perfect — they need to be yours.</p></div></div>
+          <div class="value-item"><span class="value-num">02</span><div class="value-text"><h4>Craft that respects the maker</h4><p>Each journal is made with intention — from paper weight to spine, everything considered for the writer within you.</p></div></div>
+          <div class="value-item"><span class="value-num">03</span><div class="value-text"><h4>A community of creators</h4><p>Fankaar is more than a brand. It is a gathering place for writers, thinkers, artists, and dreamers across Pakistan.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTAGRAM GRID -->
+  <section class="insta-section">
+    <p class="section-eyebrow" style="text-align:center">@fankaar_pk</p>
+    <h2 class="section-title" style="text-align:center">A community of <em>creators</em></h2>
+    <div class="insta-grid">
+      <div class="insta-item"><div class="insta-placeholder"><p class="insta-label">"The pen moves before the mind knows where it is going."</p><span style="font-size:10px;letter-spacing:0.2em;color:rgba(201,168,76,0.5);text-transform:uppercase">@fankaar_pk</span></div><div class="insta-overlay"><span class="insta-handle">@fankaar_pk</span></div></div>
+      <div class="insta-item"><div class="insta-placeholder"><p class="insta-label">"Write until you feel like yourself again."</p></div><div class="insta-overlay"><span class="insta-handle">View Post</span></div></div>
+      <div class="insta-item"><div class="insta-placeholder"><p class="insta-label">New Drop: The Golden Hour</p></div><div class="insta-overlay"><span class="insta-handle">View Post</span></div></div>
+      <div class="insta-item"><div class="insta-placeholder"><p class="insta-label">"Art begins where words end — and then begins again."</p></div><div class="insta-overlay"><span class="insta-handle">View Post</span></div></div>
+      <div class="insta-item"><div class="insta-placeholder"><p class="insta-label">Community Spotlight</p></div><div class="insta-overlay"><span class="insta-handle">View Post</span></div></div>
+    </div>
+    <button class="btn-ghost" style="margin:0 auto;display:block" onclick="window.open('https://instagram.com/fankaar_pk','_blank')">Join the Fankaar Community →</button>
+  </section>
+
+  <section class="newsletter" style="padding:70px 60px">
+    <div class="nl-text"><h3>Get inspired <em style="font-family:var(--serif);color:var(--gold-light)">weekly.</em></h3><p>Writing prompts, journal guides, and new arrivals — delivered with intention.</p></div>
+    <div class="nl-form"><input class="nl-input" type="email" placeholder="Your email address"><button class="nl-btn">Subscribe</button></div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand"><p class="footer-logo">FANKAAR</p><p>A creative journal brand from Lahore, Pakistan. We believe every person carries a story worth telling — our journals are simply the space to tell it.</p><div class="social-links"><div class="social-link" onclick="window.open('https://instagram.com/fankaar_pk','_blank')">ig</div><div class="social-link">fb</div><div class="social-link">tt</div><div class="social-link">yt</div></div></div>
+      <div class="footer-col"><h4>Shop</h4><ul><li><a onclick="showPage('shop')">All Journals</a></li><li><a>Lined</a></li><li><a>Dotted</a></li><li><a>Plain</a></li><li><a>Limited Editions</a></li></ul></div>
+      <div class="footer-col"><h4>Company</h4><ul><li><a onclick="showPage('about')">Our Story</a></li><li><a>Stockists</a></li><li><a>Press</a></li><li><a>Careers</a></li></ul></div>
+      <div class="footer-col"><h4>Support</h4><ul><li><a>Shipping Info</a></li><li><a>Returns</a></li><li><a>Contact Us</a></li><li><a>FAQ</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 Fankaar. All rights reserved. Crafted with care in Lahore, Pakistan.</p><p style="font-family:var(--serif);font-style:italic;color:rgba(201,168,76,0.4)">Write your story.</p></div>
+  </footer>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     SHOP PAGE — all 6 products
+══════════════════════════════════════════ -->
+<div id="page-shop" class="page">
+  <div class="shop-hero">
+    <p class="section-eyebrow">The Collection</p>
+    <h1 class="section-title">Find your <em>canvas</em></h1>
+    <p class="section-body">Every journal is a world waiting to be written. Choose yours.</p>
+    <div class="shop-filters">
+      <button class="filter-btn active" onclick="setFilter(this)">All</button>
+      <button class="filter-btn" onclick="setFilter(this)">Lined</button>
+      <button class="filter-btn" onclick="setFilter(this)">Dotted</button>
+      <button class="filter-btn" onclick="setFilter(this)">Plain</button>
+      <button class="filter-btn" onclick="setFilter(this)">A5</button>
+      <button class="filter-btn" onclick="setFilter(this)">A6 Pocket</button>
+      <button class="filter-btn" onclick="setFilter(this)">B5 Large</button>
+    </div>
+  </div>
+
+  <div class="shop-grid">
+
+    <!-- ▸ PRODUCT 1: The Quran Journal -->
+    <div class="shop-item" onclick="showPage('product')">
+      <div class="shop-item-img">
+        <div class="card-carousel">
+          <div class="card-carousel-track">
+           <img src="images/qjournal-1.jpeg" alt="The Quran Journal 1"> 
+              <img src="images/qjournal-2.jpeg" alt="The Quran Journal 2">
+              <img src="images/qjournal-3.jpeg" alt="The Quran Journal 3">
+              <img src="images/qjournal-4.jpeg" alt="The Quran Journal 4"> 
+          </div>
+          <button class="card-nav card-prev" onclick="cardPrev(event,this)">&#8249;</button>
+          <button class="card-nav card-next" onclick="cardNext(event,this)">&#8250;</button>
+          <div class="card-dots"><div class="card-dot active"></div><div class="card-dot"></div><div class="card-dot"></div></div>
+        </div>
+        <div class="shop-item-badge">Bestseller</div>
+        <button class="wishlist-btn" onclick="toggleWishlist(event,this)">♡</button>
+      </div>
+      <div class="shop-item-info">
+        <p class="product-tag">Lined · A5</p>
+        <h3 class="product-name">The Quran Journal</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin:6px 0 12px;line-height:1.6">A space where your thoughts breathe.</p>
+        <p class="product-price">PKR 1,850</p>
+      </div>
+    </div>
+
+    <!-- ▸ PRODUCT 2: The Golden Hour -->
+    <div class="shop-item" onclick="showPage('product')">
+      <div class="shop-item-img">
+        <div class="card-carousel">
+          <div class="card-carousel-track">
+            <img src="images/golden-hour-1.jpg" alt="The Golden Hour 1">
+            <img src="images/golden-hour-2.jpg" alt="The Golden Hour 2">
+            <img src="images/golden-hour-3.jpg" alt="The Golden Hour 3">
+          </div>
+          <button class="card-nav card-prev" onclick="cardPrev(event,this)">&#8249;</button>
+          <button class="card-nav card-next" onclick="cardNext(event,this)">&#8250;</button>
+          <div class="card-dots"><div class="card-dot active"></div><div class="card-dot"></div><div class="card-dot"></div></div>
+        </div>
+        <div class="shop-item-badge" style="background:transparent;border:1px solid var(--gold);color:var(--gold)">New</div>
+        <button class="wishlist-btn" onclick="toggleWishlist(event,this)">♡</button>
+      </div>
+      <div class="shop-item-info">
+        <p class="product-tag">Dotted · B5</p>
+        <h3 class="product-name">The Golden Hour</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin:6px 0 12px;line-height:1.6">For ideas that arrive just before dawn.</p>
+        <p class="product-price">PKR 2,400</p>
+      </div>
+    </div>
+
+    <!-- ▸ PRODUCT 3: The Wanderer -->
+    <div class="shop-item" onclick="showPage('product')">
+      <div class="shop-item-img">
+        <div class="card-carousel">
+          <div class="card-carousel-track">
+            <img src="images/wanderer-1.jpg" alt="The Wanderer 1">
+            <img src="images/wanderer-2.jpg" alt="The Wanderer 2">
+            <img src="images/wanderer-3.jpg" alt="The Wanderer 3">
+          </div>
+          <button class="card-nav card-prev" onclick="cardPrev(event,this)">&#8249;</button>
+          <button class="card-nav card-next" onclick="cardNext(event,this)">&#8250;</button>
+          <div class="card-dots"><div class="card-dot active"></div><div class="card-dot"></div><div class="card-dot"></div></div>
+        </div>
+        <button class="wishlist-btn" onclick="toggleWishlist(event,this)">♡</button>
+      </div>
+      <div class="shop-item-info">
+        <p class="product-tag">Plain · A6</p>
+        <h3 class="product-name">The Wanderer</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin:6px 0 12px;line-height:1.6">Carry your universe in your pocket.</p>
+        <p class="product-price">PKR 1,100</p>
+      </div>
+    </div>
+
+    <!-- ▸ PRODUCT 4: The Celestial -->
+    <div class="shop-item" onclick="showPage('product')">
+      <div class="shop-item-img">
+        <div class="card-carousel">
+          <div class="card-carousel-track">
+            <img src="images/celestial-1.jpg" alt="The Celestial 1">
+            <img src="images/celestial-2.jpg" alt="The Celestial 2">
+            <img src="images/celestial-3.jpg" alt="The Celestial 3">
+          </div>
+          <button class="card-nav card-prev" onclick="cardPrev(event,this)">&#8249;</button>
+          <button class="card-nav card-next" onclick="cardNext(event,this)">&#8250;</button>
+          <div class="card-dots"><div class="card-dot active"></div><div class="card-dot"></div><div class="card-dot"></div></div>
+        </div>
+        <div class="shop-item-badge">Limited</div>
+        <button class="wishlist-btn" onclick="toggleWishlist(event,this)">♡</button>
+      </div>
+      <div class="shop-item-info">
+        <p class="product-tag">Lined · B5 · Limited</p>
+        <h3 class="product-name">The Celestial</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin:6px 0 12px;line-height:1.6">Written under starlight, bound in intention.</p>
+        <p class="product-price">PKR 3,200</p>
+      </div>
+    </div>
+
+    <!-- ▸ PRODUCT 5: The Architect -->
+    <div class="shop-item" onclick="showPage('product')">
+      <div class="shop-item-img">
+        <div class="card-carousel">
+          <div class="card-carousel-track">
+            <img src="images/architect-1.jpg" alt="The Architect 1">
+            <img src="images/architect-2.jpg" alt="The Architect 2">
+            <img src="images/architect-3.jpg" alt="The Architect 3">
+          </div>
+          <button class="card-nav card-prev" onclick="cardPrev(event,this)">&#8249;</button>
+          <button class="card-nav card-next" onclick="cardNext(event,this)">&#8250;</button>
+          <div class="card-dots"><div class="card-dot active"></div><div class="card-dot"></div><div class="card-dot"></div></div>
+        </div>
+        <button class="wishlist-btn" onclick="toggleWishlist(event,this)">♡</button>
+      </div>
+      <div class="shop-item-info">
+        <p class="product-tag">Dotted · A5</p>
+        <h3 class="product-name">The Architect</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin:6px 0 12px;line-height:1.6">Build your world, one dot at a time.</p>
+        <p class="product-price">PKR 1,950</p>
+      </div>
+    </div>
+
+    <!-- ▸ PRODUCT 6: The Studio -->
+    <div class="shop-item" onclick="showPage('product')">
+      <div class="shop-item-img">
+        <div class="card-carousel">
+          <div class="card-carousel-track">
+            <img src="images/studio-1.jpg" alt="The Studio 1">
+            <img src="images/studio-2.jpg" alt="The Studio 2">
+            <img src="images/studio-3.jpg" alt="The Studio 3">
+          </div>
+          <button class="card-nav card-prev" onclick="cardPrev(event,this)">&#8249;</button>
+          <button class="card-nav card-next" onclick="cardNext(event,this)">&#8250;</button>
+          <div class="card-dots"><div class="card-dot active"></div><div class="card-dot"></div><div class="card-dot"></div></div>
+        </div>
+        <button class="wishlist-btn" onclick="toggleWishlist(event,this)">♡</button>
+      </div>
+      <div class="shop-item-info">
+        <p class="product-tag">Plain · A4</p>
+        <h3 class="product-name">The Studio</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin:6px 0 12px;line-height:1.6">A canvas with no rules, only possibilities.</p>
+        <p class="product-price">PKR 2,100</p>
+      </div>
+    </div>
+
+  </div>
+
+  <section class="newsletter" style="padding:70px 60px">
+    <div class="nl-text"><h3>Get <em style="font-family:var(--serif);color:var(--gold-light)">inspired</em> weekly.</h3><p>Writing prompts, new arrivals, and creative rituals in your inbox.</p></div>
+    <div class="nl-form"><input class="nl-input" type="email" placeholder="Your email address"><button class="nl-btn">Subscribe</button></div>
+  </section>
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand"><p class="footer-logo">FANKAAR</p><p>A creative journal brand from Lahore, Pakistan. Every page, a possibility.</p></div>
+      <div class="footer-col"><h4>Shop</h4><ul><li><a onclick="showPage('shop')">All Journals</a></li><li><a>Lined</a></li><li><a>Dotted</a></li><li><a>Plain</a></li></ul></div>
+      <div class="footer-col"><h4>Company</h4><ul><li><a onclick="showPage('about')">Our Story</a></li><li><a>Press</a></li><li><a>Careers</a></li></ul></div>
+      <div class="footer-col"><h4>Support</h4><ul><li><a>Shipping</a></li><li><a>Returns</a></li><li><a>Contact</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 Fankaar. All rights reserved.</p><p style="font-family:var(--serif);font-style:italic;color:rgba(201,168,76,0.4)">Write your story.</p></div>
+  </footer>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     PRODUCT DETAIL PAGE
+     Shows Product 1 (The Quran Journal)
+     Duplicate & swap images+info for others
+══════════════════════════════════════════ -->
+<div id="page-product" class="page">
+  <div class="product-detail">
+
+    <!-- LEFT: large image + 3 thumbs -->
+    <div class="product-gallery">
+      <div class="gallery-main">
+        <!-- Image 1 — active by default -->
+        <div class="gallery-main-img active">
+          <img src="images/qjournal-1.jpeg" alt="The Quran Journal — View 1">
+        </div>
+        <!-- Image 2 -->
+        <div class="gallery-main-img">
+          <img src="images/qjournal-2.jpeg" alt="The Quran Journal — View 2">
+        </div>
+        <!-- Image 3 -->
+        <div class="gallery-main-img">
+          <img src="images/qjournal-3.jpeg" alt="The Quran Journal — View 3">
+        </div>
+      </div>
+      <!-- Thumbnails — clicking switches the main image -->
+      <div class="gallery-thumbs">
+        <div class="thumb active" onclick="switchThumb(this,0)">
+          <img src="images/qjournal-1.jpeg" alt="Thumb 1">
+        </div>
+        <div class="thumb" onclick="switchThumb(this,1)">
+          <img src="images/qjournal-2.jpeg" alt="Thumb 2">
+        </div>
+        <div class="thumb" onclick="switchThumb(this,2)">
+          <img src="images/qjournal-3.jpeg" alt="Thumb 3">
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: info panel -->
+    <div class="product-info-panel">
+      <p class="product-category">Lined Collection · A5</p>
+      <h1 class="product-title">The Quran<br>Journal</h1>
+      <p class="product-tagline">"A space where your thoughts breathe,<br>undisturbed by the noise of the world."</p>
+      <div class="divider"></div>
+      <p class="product-price-large">PKR 1,850</p>
+      <div class="product-specs">
+        <div class="spec"><span class="spec-label">Size</span><span class="spec-val">A5 · 148×210mm</span></div>
+        <div class="spec"><span class="spec-label">Pages</span><span class="spec-val">200 pages</span></div>
+        <div class="spec"><span class="spec-label">Paper</span><span class="spec-val">90gsm ivory</span></div>
+        <div class="spec"><span class="spec-label">Cover</span><span class="spec-val">Soft-touch matte</span></div>
+      </div>
+      <button class="add-cart-btn" onclick="addToCart()">Add to Cart</button>
+      <button class="wishlist-full" onclick="this.textContent=this.textContent.includes('♡')?'♥  Saved to Wishlist':'♡  Save to Wishlist'">♡  Save to Wishlist</button>
+      <div style="margin-top:24px;padding-top:24px;border-top:1px solid rgba(201,168,76,0.08)">
+        <p style="font-size:12px;color:var(--text-dim);line-height:1.8">✓ Free shipping over PKR 3,000 &nbsp;·&nbsp; ✓ 14-day returns &nbsp;·&nbsp; ✓ Handpacked with care</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="reviews-section">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:40px;flex-wrap:wrap;gap:16px">
+      <div><p class="section-eyebrow">What they say</p><h2 style="font-family:var(--serif);font-size:32px;font-weight:300;color:var(--beige-soft)">Reviews <em style="font-style:italic;color:var(--gold-light)">(24)</em></h2></div>
+      <div style="text-align:right"><p style="font-family:var(--serif);font-size:48px;font-weight:300;color:var(--gold-light)">4.9</p><p style="font-size:12px;color:var(--text-dim);letter-spacing:0.1em;text-transform:uppercase">out of 5</p></div>
+    </div>
+    <div class="review-card"><div class="review-header"><span class="reviewer-name">Zara M. — Lahore</span><span class="review-stars">★★★★★</span></div><p class="review-text">"I've tried many journals but nothing has felt this intentional. The paper weight, the way the pages smell, even the binding — it all says someone cared deeply about the writer's experience. My thoughts feel honored here."</p></div>
+    <div class="review-card"><div class="review-header"><span class="reviewer-name">Ahmed K. — Karachi</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Bought this for my morning pages ritual. Three months in and I'm on my second one. The quality is exceptional and the aesthetic makes me want to sit and write. That's rare."</p></div>
+    <div class="review-card"><div class="review-header"><span class="reviewer-name">Sana A. — Islamabad</span><span class="review-stars">★★★★☆</span></div><p class="review-text">"Beautiful from the moment you hold it. Gifted one to my sister too. The packaging alone made her eyes light up — and then she opened it."</p></div>
+  </div>
+
+  <section class="newsletter" style="padding:70px 60px">
+    <div class="nl-text"><h3>Never miss a <em style="font-family:var(--serif);color:var(--gold-light)">drop.</em></h3><p>New journals, limited editions, and writing inspiration — straight to you.</p></div>
+    <div class="nl-form"><input class="nl-input" type="email" placeholder="Your email"><button class="nl-btn">Subscribe</button></div>
+  </section>
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand"><p class="footer-logo">FANKAAR</p><p>Crafted for creators. Made in Pakistan.</p></div>
+      <div class="footer-col"><h4>Shop</h4><ul><li><a onclick="showPage('shop')">All Journals</a></li></ul></div>
+      <div class="footer-col"><h4>Company</h4><ul><li><a onclick="showPage('about')">Our Story</a></li></ul></div>
+      <div class="footer-col"><h4>Support</h4><ul><li><a>Contact</a></li><li><a>Returns</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 Fankaar. All rights reserved.</p><p style="font-family:var(--serif);font-style:italic;color:rgba(201,168,76,0.4)">Write your story.</p></div>
+  </footer>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     ABOUT PAGE
+══════════════════════════════════════════ -->
+<div id="page-about" class="page">
+  <div class="about-hero">
+    <div class="about-hero-bg"></div>
+    <div style="max-width:680px;position:relative">
+      <p class="section-eyebrow">Our Story</p>
+      <h1 style="font-family:var(--serif);font-size:clamp(48px,7vw,88px);font-weight:300;line-height:1.05;margin-bottom:32px;color:var(--beige-soft)">Born from<br>the need to<br><em style="color:var(--gold-light);font-style:italic">express.</em></h1>
+      <div class="divider"></div>
+      <p style="font-size:16px;color:var(--text-dim);line-height:1.9;max-width:560px">Fankaar was born in Lahore — in conversations between students and thinkers who felt they had something to say but nowhere that felt worthy of saying it. We make journals for the Pakistan that dreams quietly, thinks deeply, and creates beautifully.</p>
+    </div>
+  </div>
+  <div style="padding:0 60px">
+    <div class="about-grid">
+      <div class="about-card"><p class="section-eyebrow">Why We Exist</p><h3>Every person is a creator in waiting.</h3><p>We grew up in a culture that celebrates the engineer, the doctor, the businessman. But what about the writer, the dreamer, the one who fills margins with thoughts? Fankaar is for them. A brand that says: your inner world deserves beautiful tools.</p></div>
+      <div class="about-card"><p class="section-eyebrow">What Fankaar Means</p><h3>"Fankaar" — the artist within.</h3><p>In Urdu, a fankaar is an artist, a craftsperson, a performer. Someone who has surrendered themselves to their art. We named ourselves after this idea because we believe writing — even privately, even imperfectly — is one of the purest forms of art.</p></div>
+      <div class="about-card"><p class="section-eyebrow">Our Craft</p><h3>Nothing here is accidental.</h3><p>Every paper weight, every binding technique, every cover texture is chosen by writers, for writers. We test each journal in real creative environments — not boardrooms. Because a journal should feel like it belongs in your hands, not in a catalog.</p></div>
+      <div class="about-card"><p class="section-eyebrow">Our Community</p><h3>A gathering of creative souls.</h3><p>On Instagram, in universities, in coffee shops across Pakistan — the Fankaar community is growing. Writers, sketchers, bullet journalers, students with too many thoughts and not enough pages. Join us at @fankaar_pk.</p></div>
+    </div>
+  </div>
+  <div class="about-manifesto">
+    <p class="section-eyebrow" style="text-align:center;margin-bottom:32px">Our Manifesto</p>
+    <p class="manifesto-text">"We believe expression is not a luxury — it is a <em>necessity.</em> Every mind is an artist. Every story deserves a page. Every voice deserves to be <em>written.</em>"</p>
+    <div class="divider" style="margin:40px auto"></div>
+    <button class="btn-primary" onclick="showPage('shop')">Find Your Journal</button>
+  </div>
+  <section class="newsletter" style="padding:70px 60px">
+    <div class="nl-text"><h3>Get <em style="font-family:var(--serif);color:var(--gold-light)">inspired</em> weekly.</h3><p>Writing prompts, brand stories, and creative rituals — weekly.</p></div>
+    <div class="nl-form"><input class="nl-input" type="email" placeholder="Your email"><button class="nl-btn">Subscribe</button></div>
+  </section>
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand"><p class="footer-logo">FANKAAR</p><p>For the dreamers, the writers, the thinkers of Pakistan.</p></div>
+      <div class="footer-col"><h4>Shop</h4><ul><li><a onclick="showPage('shop')">All Journals</a></li></ul></div>
+      <div class="footer-col"><h4>Company</h4><ul><li><a onclick="showPage('about')">Our Story</a></li></ul></div>
+      <div class="footer-col"><h4>Support</h4><ul><li><a>Contact</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 Fankaar. All rights reserved.</p><p style="font-family:var(--serif);font-style:italic;color:rgba(201,168,76,0.4)">Write your story.</p></div>
+  </footer>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     CART PAGE
+══════════════════════════════════════════ -->
+<div id="page-cart" class="page">
+  <div style="padding:50px 60px 20px">
+    <p class="section-eyebrow">Your Selection</p>
+    <h1 style="font-family:var(--serif);font-size:clamp(36px,5vw,52px);font-weight:300;color:var(--beige-soft)">Your <em style="color:var(--gold-light);font-style:italic">Cart</em></h1>
+  </div>
+  <div class="cart-layout">
+    <div class="cart-items">
+      <div class="cart-item">
+        <div class="cart-item-img"><img src="images/qjournal-1.jpeg" alt="The Quran Journal"></div>
+        <div>
+          <p class="cart-item-name">The Quran Journal</p>
+          <p class="cart-item-detail">Lined · A5 · Navy</p>
+          <div class="qty-ctrl"><button class="qty-btn" onclick="changeQty(this,-1)">−</button><input class="qty-num" value="1" readonly><button class="qty-btn" onclick="changeQty(this,1)">+</button></div>
+        </div>
+        <p class="cart-item-price">PKR 1,850</p>
+      </div>
+      <div class="cart-item">
+        <div class="cart-item-img"><img src="images/golden-hour-1.jpg" alt="The Golden Hour"></div>
+        <div>
+          <p class="cart-item-name">The Golden Hour</p>
+          <p class="cart-item-detail">Dotted · B5 · Gold Edition</p>
+          <div class="qty-ctrl"><button class="qty-btn" onclick="changeQty(this,-1)">−</button><input class="qty-num" value="1" readonly><button class="qty-btn" onclick="changeQty(this,1)">+</button></div>
+        </div>
+        <p class="cart-item-price">PKR 2,400</p>
+      </div>
+      <div style="margin-top:30px"><button class="btn-ghost" onclick="showPage('shop')" style="font-size:11px">← Continue Shopping</button></div>
+    </div>
+    <div class="cart-summary">
+      <h2 class="summary-title">Order Summary</h2>
+      <div class="summary-row"><span>Subtotal (2 items)</span><span>PKR 4,250</span></div>
+      <div class="summary-row"><span>Shipping</span><span style="color:var(--gold)">Free</span></div>
+      <div class="summary-row"><span>Discount</span><span>—</span></div>
+      <div class="summary-total"><span>Total</span><span>PKR 4,250</span></div>
+      <div class="promo-input-wrap"><input class="promo-input" placeholder="Promo code"><button class="promo-btn">Apply</button></div>
+      <button class="checkout-btn" onclick="alert('Connect your payment gateway here')">Proceed to Checkout →</button>
+      <p style="font-size:11px;color:var(--text-dim);text-align:center;margin-top:16px;line-height:1.7">Secure checkout · Free shipping above PKR 3,000 · 14-day returns</p>
+    </div>
+  </div>
+  <footer style="margin-top:60px">
+    <div class="footer-bottom" style="padding:30px 60px;border-top:1px solid rgba(201,168,76,0.08)">
+      <p>© 2025 Fankaar. All rights reserved.</p>
+      <p style="font-family:var(--serif);font-style:italic;color:rgba(201,168,76,0.4)">Write your story.</p>
+    </div>
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function setFilter(el){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ── CARD CAROUSEL ── */
+function getIdx(carousel){ return parseInt(carousel.dataset.idx||0); }
+function setIdx(carousel, idx){
+  const imgs  = carousel.querySelectorAll('.card-carousel-track img');
+  const dots  = carousel.querySelectorAll('.card-dot');
+  const total = imgs.length;
+  idx = ((idx % total) + total) % total;
+  carousel.dataset.idx = idx;
+  carousel.querySelector('.card-carousel-track').style.transform = `translateX(-${idx*(100/total)}%)`;
+  dots.forEach((d,i)=>d.classList.toggle('active', i===idx));
+}
+function cardPrev(e, btn){ e.stopPropagation(); setIdx(btn.closest('.card-carousel'), getIdx(btn.closest('.card-carousel'))-1); }
+function cardNext(e, btn){ e.stopPropagation(); setIdx(btn.closest('.card-carousel'), getIdx(btn.closest('.card-carousel'))+1); }
+document.addEventListener('click', e=>{
+  if(e.target.classList.contains('card-dot')){
+    e.stopPropagation();
+    const dots = [...e.target.closest('.card-dots').querySelectorAll('.card-dot')];
+    setIdx(e.target.closest('.card-carousel'), dots.indexOf(e.target));
+  }
+});
+
+/* ── PRODUCT PAGE THUMB SWITCHER ── */
+function switchThumb(thumb, idx){
+  const gallery = thumb.closest('.product-gallery');
+  gallery.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active'));
+  gallery.querySelectorAll('.gallery-main-img').forEach(img=>img.classList.remove('active'));
+  thumb.classList.add('active');
+  gallery.querySelectorAll('.gallery-main-img')[idx].classList.add('active');
+}
+
+/* ── WISHLIST ── */
+function toggleWishlist(e, btn){
+  e.stopPropagation();
+  btn.classList.toggle('active');
+  btn.textContent = btn.classList.contains('active') ? '♥' : '♡';
+  showToast(btn.classList.contains('active') ? 'Added to wishlist' : 'Removed from wishlist');
+}
+
+/* ── QTY ── */
+function changeQty(btn, delta){
+  const input = btn.parentElement.querySelector('.qty-num');
+  let v = parseInt(input.value)+delta;
+  input.value = Math.min(10, Math.max(1, v));
+}
+
+function addToCart(){ showToast('Added to cart successfully'); }
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
